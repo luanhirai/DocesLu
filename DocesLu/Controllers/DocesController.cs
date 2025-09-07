@@ -18,20 +18,41 @@ namespace DocesLu.Controllers
 
 
         [HttpPost("save")]
-        public IActionResult save([FromForm] DocesViewModel docesView)
+        public IActionResult Save([FromForm] DocesViewModel docesView)
         {
-            RespostaPadrao r = new RespostaPadrao();
+            if (docesView.ImagemUrl == null || docesView.ImagemUrl.Length == 0)
+                return BadRequest(new { message = "Imagem não enviada" });
 
-            var filepath = Path.Combine("Storage", docesView.ImagemUrl.FileName);
-            using Stream fileStream = new FileStream(filepath, FileMode.Create);
-            docesView.ImagemUrl.CopyTo(fileStream);
+            // Salva a imagem na pasta Storage
+            var fileName = Path.GetFileName(docesView.ImagemUrl.FileName);
+            var filePath = Path.Combine("Storage", fileName);
 
-            var doce = new Doces(docesView.Titulo, docesView.Descricao, docesView.Preco, filepath, docesView.Mensagem);
-            r.Sucesso = true;
-            r.Dados = doce;
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                docesView.ImagemUrl.CopyTo(fileStream);
+            }
+
+            var imageUrl = $"/Storage/{fileName}";
+
+            var doce = new Doces(
+                docesView.Titulo,
+                docesView.Descricao,
+                docesView.Preco,
+                imageUrl,
+                docesView.Mensagem
+            );
+
             _docesRepository.Add(doce);
+
+            var r = new RespostaPadrao
+            {
+                Sucesso = true,
+                Dados = doce
+            };
+
             return Ok(r);
         }
+
 
 
         [HttpGet]
