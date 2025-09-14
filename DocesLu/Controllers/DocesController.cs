@@ -99,5 +99,43 @@ namespace DocesLu.Controllers
             r.Dados = $"Produto {id} deletado com sucesso.";
             return Ok(r);
         }
+
+
+        [HttpPut("update/{id}")]
+        public IActionResult UpdateProd(int id, [FromForm] DocesViewModel docesView)
+        {
+            RespostaPadrao r = new RespostaPadrao();
+            var doce = _docesRepository.GetAll().FirstOrDefault(d => d.Id == id);
+            if (doce == null)
+            {
+                r.Sucesso = false;
+                r.Erro = $"Produto {id} não encontrado.";
+                return NotFound(r);
+            }
+
+            doce.Titulo = docesView.Titulo;
+            doce.Descricao = docesView.Descricao;
+            doce.Preco = docesView.Preco;
+            doce.Mensagem = docesView.Mensagem;
+
+            if (docesView.ImagemUrl != null && docesView.ImagemUrl.Length > 0)
+            {
+                var fileName = Path.GetFileName(docesView.ImagemUrl.FileName);
+                var filePath = Path.Combine("Storage", fileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    docesView.ImagemUrl.CopyTo(fileStream);
+                }
+
+                doce.ImagemUrl = $"/Storage/{fileName}";
+            }
+
+            _docesRepository.Update(doce);
+
+            r.Sucesso = true;
+            r.Dados = doce;
+            return Ok(r);
+        }
     }
 }

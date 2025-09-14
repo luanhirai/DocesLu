@@ -7,12 +7,12 @@ namespace DocesLu.Model.Doces
     public class Doces
     {
         [Key]
-        public int Id { get; private set; }
-        public string Titulo { get; private set; }
-        public string Descricao { get; private set; }
-        public string Preco { get; private set; }
-        public string? ImagemUrl { get; private set; }
-        public string Mensagem { get; private set; }
+        public int Id { get; set; }
+        public string Titulo { get; set; }
+        public string Descricao { get; set; }
+        public string Preco { get; set; }
+        public string? ImagemUrl { get; set; }
+        public string Mensagem { get; set; }
 
         public Doces(string titulo, string descricao, string preco, string imagemUrl, string mensagem)
         {

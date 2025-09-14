@@ -35,5 +35,11 @@ namespace DocesLu.Data
         {
             return _context.Doces.ToList();
         }
+
+        public void Update(Doces doce)
+        {
+            _context.Doces.Update(doce);
+            _context.SaveChanges();
+        }
     }
 }

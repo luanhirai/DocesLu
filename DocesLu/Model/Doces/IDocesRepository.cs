@@ -9,5 +9,7 @@
         void Delete(Doces doce);
 
         List<Doces> GetAll();
+
+        void Update(Doces doces);
     }
 }
