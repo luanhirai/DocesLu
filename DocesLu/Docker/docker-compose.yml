@@ -1,0 +1,19 @@
+services:
+  web-api:
+    container_name: web-api
+    image: web-api
+    build:
+      context: ../        
+      dockerfile: ./Docker/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - rede
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONNECTION_STRING=Server=doceslu-db.cj2kiyiw642b.sa-east-1.rds.amazonaws.com;Database=docesdalu;User=admin;Password=DocesDaLu12345;Port=3306;
+    volumes:   
+      - ./Storage:/App/Storage
+networks:
+  rede:
+    external: true

@@ -16,48 +16,18 @@ builder.Services.AddDbContext<ConnectionContext>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddTransient<IDocesRepository, DocesRepository>();
 
-// Swagger
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header
-            },
-            new List<string>()
-        }
-    });
-});
 
 // CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://127.0.0.1:5173", "http://localhost:5173") // Ambos os hosts
+        policy.AllowAnyOrigin()   // Permite acesso de qualquer domínio
               .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowAnyMethod();
     });
 });
+
 
 // JWT Authentication
 var key = Encoding.ASCII.GetBytes(DocesLu.Key.Secret);
@@ -80,9 +50,6 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// Swagger
-app.UseSwagger();
-
 // CORS
 app.UseCors("AllowReactApp");
 
@@ -103,6 +70,10 @@ app.UseAuthorization();
 
 // Controllers
 app.MapControllers();
+
+
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+app.Urls.Add($"http://*:{port}");
 
 // Executa a aplicação
 app.Run();
