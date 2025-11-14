@@ -1,0 +1,14 @@
+services:
+  web-api:
+    container_name: web-api
+    image: web-api
+    build:
+      context: ../        
+      dockerfile: ./Docker/Dockerfile
+    ports:
+      - "8080:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONNECTION_STRING=Server=rds-docesdalu.cilgqiygo8zx.us-east-1.rds.amazonaws.com;Database=doceslu;User=admin;Password=luanhirai10!;Port=3306;
+    volumes:   
+      - ./Storage:/App/Storage
